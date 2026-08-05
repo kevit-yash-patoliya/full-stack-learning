@@ -1,0 +1,170 @@
+In **NestJS**, a **guard** is a class annotated with the `@Injectable()` decorator that implements the `CanActivate` interface. Guards have a single responsibility: **to determine whether a request shall be handled by the route handler or not**, depending on conditions (like permissions, roles, ACL, tokens) present at runtime.
+
+Guards are executed **after** all middleware, but **before** any interceptor or pipe.
+
+---
+
+## 1. What are Guards?
+
+Unlike middleware (which doesn't inherently know which handler will be executed next), guards have access to the **`ExecutionContext`** instance. This means they know precisely what route, controller, or method is about to run, making them ideal for authentication and authorization logic.
+
+### Anatomy of a Basic Guard
+
+```typescript
+// auth.guard.ts
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest();
+    // Perform your authentication check here
+    return validateRequest(request); 
+  }
+}
+
+```
+
+---
+
+## 2. Authentication Guards
+
+Authentication guards verify *who* the user is, typically by validating a JSON Web Token (JWT), API key, or session cookie attached to the incoming request. If verification fails, the guard throws an unauthorized exception (e.g., `UnauthorizedException`), stopping the request lifecycle.
+
+```typescript
+// jwt-auth.guard.ts
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+
+@Injectable()
+export class JwtAuthGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    const token = request.headers.authorization;
+
+    if (!token) {
+      throw new UnauthorizedException('No token provided');
+    }
+
+    // Verify token logic here...
+    return true; 
+  }
+}
+
+```
+
+---
+
+## 3. Authorization Guards
+
+While authentication verifies *who* you are, authorization checks *what you are allowed to do*. An authorization guard examines the authenticated user object (often attached to `request.user` by a prior authentication step) to see if they have access to a specific resource.
+
+```typescript
+// subscription.guard.ts
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+
+@Injectable()
+export class SubscriptionGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    const user = request.user; // Attached by auth middleware/guard
+
+    if (!user || !user.hasActiveSubscription) {
+      throw new ForbiddenException('Active subscription required to access this endpoint');
+    }
+
+    return true;
+  }
+}
+
+```
+
+---
+
+## 4. Role-based Guards
+
+Role-Based Access Control (RBAC) allows you to restrict access based on user roles (e.g., `admin`, `moderator`, `user`). NestJS achieves this cleanly by combining **Custom Decorators** with **Guards** so you can metadata-tag routes with required roles.
+
+### Step 1: Create a Roles Decorator
+
+```typescript
+// roles.decorator.ts
+import { SetMetadata } from '@nestjs/common';
+
+export const ROLES_KEY = 'roles';
+export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
+
+```
+
+### Step 2: Create the Roles Guard
+
+```typescript
+// roles.guard.ts
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { ROLES_KEY } from './roles.decorator';
+
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (!requiredRoles) {
+      return true; // If no roles are specified, allow access
+    }
+
+    const { user } = context.switchToHttp().getRequest();
+    return requiredRoles.some((role) => user?.roles?.includes(role));
+  }
+}
+
+```
+
+### Step 3: Apply the Guard and Roles
+
+```typescript
+@Controller('admin')
+@UseGuards(RolesGuard)
+export class AdminController {
+  @Get('dashboard')
+  @Roles('admin') // Only users with the 'admin' role can access this
+  getDashboard() {
+    return 'Admin Dashboard Data';
+  }
+}
+
+```
+
+---
+
+## 5. Custom Guards
+
+You can build custom guards for any arbitrary logic—such as IP rate limiting, geo-fencing, maintenance mode checks, or feature flags.
+
+### Example: Maintenance Mode Guard
+
+```typescript
+// maintenance.guard.ts
+import { Injectable, CanActivate, ExecutionContext, ServiceUnavailableException } from '@nestjs/common';
+
+@Injectable()
+export class MaintenanceGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const isUnderMaintenance = false; // Fetch from a config or database service
+
+    if (isUnderMaintenance) {
+      throw new ServiceUnavailableException('The application is currently under maintenance.');
+    }
+
+    return true;
+  }
+}
+
+```
