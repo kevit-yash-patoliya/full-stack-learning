@@ -37,7 +37,7 @@ Authentication guards verify *who* the user is, typically by validating a JSON W
 ```typescript
 // jwt-auth.guard.ts
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-
+                                                                            
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
