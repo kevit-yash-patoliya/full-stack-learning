@@ -1,0 +1,196 @@
+# Git Command Cheat Sheet
+
+## Repository Initialization
+| Command | Description |
+|---|---|
+| `git init` | Initialize a new repo |
+| `git clone <url>` | Clone a repo |
+| `git clone <url> myproject` | Clone into a specific folder |
+
+## Configuration
+| Command | Description |
+|---|---|
+| `git config --global user.name "John Doe"` | Set username |
+| `git config --global user.email "john@example.com"` | Set email |
+| `git config --list` | View configuration |
+| `git config --global credential.helper manager` | Configure credential manager |
+
+## Status
+| Command | Description |
+|---|---|
+| `git status` | Shows modified, staged, and untracked files |
+
+## Staging (Add)
+| Command | Description |
+|---|---|
+| `git add index.html` | Add one file |
+| `git add file1.txt file2.txt` | Add multiple files |
+| `git add .` | Add everything |
+
+## Commit
+| Command | Description |
+|---|---|
+| `git commit -m "message"` | Commit staged files |
+| `git commit -am "message"` | Add tracked changes + commit (doesn't add new files) |
+
+## Log / History
+| Command | Description |
+|---|---|
+| `git log` | Full commit history |
+| `git log --oneline` | Compact history |
+| `git log --graph --oneline --all` | Graph view |
+
+## Diff
+| Command | Description |
+|---|---|
+| `git diff` | Working dir vs last commit |
+| `git diff --cached` | Staged changes vs last commit |
+| `git diff abc123 def456` | Compare two commits |
+
+## Branching
+| Command | Description |
+|---|---|
+| `git branch` | List branches |
+| `git branch feature-login` | Create branch |
+| `git checkout feature-login` / `git switch feature-login` | Switch branch |
+| `git checkout -b feature-login` / `git switch -c feature-login` | Create + switch |
+| `git branch -d feature-login` | Delete branch |
+| `git branch -D feature-login` | Force delete branch |
+
+## Merge
+| Command | Description |
+|---|---|
+| `git merge feature-login` | Merge branch into current |
+
+## Remotes
+| Command | Description |
+|---|---|
+| `git remote -v` | View remotes |
+| `git remote add origin <url>` | Add remote |
+| `git remote remove origin` | Remove remote |
+| `git remote rename origin github` | Rename remote |
+
+## Push
+| Command | Description |
+|---|---|
+| `git push -u origin main` | Push first time (sets upstream) |
+| `git push` | Push subsequent times |
+| `git push origin feature-login` | Push another branch |
+
+## Pull / Fetch
+| Command | Description |
+|---|---|
+| `git pull` | Download + merge |
+| `git pull origin main` | Pull specific branch |
+| `git fetch` | Download only, no merge |
+| `git fetch origin` | Fetch specific remote |
+
+## Restore / Reset / Revert
+| Command | Description |
+|---|---|
+| `git restore app.js` | Restore file from last commit not for un tracked files|
+| `git restore --staged app.js` | Unstage a file |
+| `git reset --soft HEAD~1` | Undo commit, keep changes staged |
+| `git reset HEAD~1` | Undo commit, keep changes unstaged |
+| `git reset --hard HEAD~1` | Undo commit, discard changes |
+| `git revert HEAD` | Undo commit safely (new commit) |
+
+## Stash
+| Command | Description |
+|---|---|
+| `git stash` | Save changes |
+| `git stash list` | View stashes |
+| `git stash pop` | Restore + delete stash |
+| `git stash apply` | Restore without deleting |
+
+## Tags
+| Command | Description |
+|---|---|
+| `git tag v1.0` | Create lightweight tag |
+| `git tag -a v1.0 -m "Version 1.0"` | Create annotated tag |
+| `git push origin --tags` | Push tags |
+
+## Show / Inspect
+| Command | Description |
+|---|---|
+| `git show` | Show latest commit |
+| `git show abc123` | Show specific commit |
+| `git branch --show-current` | Current branch name |
+| `git rev-parse HEAD` | Current commit hash |
+| `git rev-parse --show-toplevel` | Repository root path |
+
+## Remove / Move Files
+| Command | Description |
+|---|---|
+| `git rm file.txt` | Delete tracked file |
+| `git rm --cached secrets.txt` | Stop tracking, keep local file untracked|
+| `git mv old.txt new.txt` | Rename/move file |
+
+## Clean
+| Command | Description |
+|---|---|
+| `git clean -f` | Delete untracked files |
+| `git clean -fd` | Delete untracked files + folders |
+
+## Cherry-pick / Rebase
+| Command | Description |
+|---|---|
+| `git cherry-pick abc123` | Copy a single commit |
+| `git rebase main` | Rebase current branch onto main |
+| `git rebase -i HEAD~5` | Interactive rebase (last 5 commits) |
+
+## Bisect
+```
+git bisect start
+git bisect bad
+git bisect good abc123
+```
+Automatically binary-searches history to find the commit that introduced a bug.
+
+## Reflog
+| Command | Description |
+|---|---|
+| `git reflog` | See all HEAD movements |
+| `git reset --hard HEAD@{2}` | Recover a "lost" commit |
+
+## Archive / Blame / Grep
+| Command | Description |
+|---|---|
+| `git archive --format=zip HEAD -o project.zip` | Create a ZIP of the repo |
+| `git blame app.js` | See who changed each line |
+| `git grep "login"` | Search inside repo |
+
+## Worktree / Submodule
+| Command | Description |
+|---|---|
+| `git worktree add ../feature feature-login` | Create another working directory |
+| `git submodule add <url>` | Add a submodule |
+| `git submodule update --init` | Update submodules |
+
+## .gitignore Example
+```
+node_modules/
+.env
+dist/
+*.log
+```
+
+---
+
+## Typical Daily Workflow
+```bash
+git clone https://github.com/user/project.git
+cd project
+
+git switch -c feature-login
+
+# Edit files...
+git status
+git add .
+git commit -m "Add login feature"
+
+git pull origin main
+git push -u origin feature-login
+```
+
+These commands cover the vast majority of day-to-day Git work. More advanced topics — hooks, sparse checkouts, history filtering, and plumbing commands — build on this same core toolkit.

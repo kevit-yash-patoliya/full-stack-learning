@@ -79,6 +79,9 @@ docker build -t my-app:1.0 .
 # Tag an image for registry upload
 docker tag my-app:1.0 username/my-app:1.0
 
+# tag
+docker tag practice-react yashpatoliyakevit/practice-react:latest
+
 # Push an image to Docker Hub
 docker push username/my-app:1.0
 ```
