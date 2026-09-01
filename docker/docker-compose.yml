@@ -1,0 +1,17 @@
+services:
+
+  db:
+    image: mongo:latest
+    container_name: "demo-db"
+    ports:
+      - "27018:27017"
+    volumes:
+      - "./mongo-data:/data/db"
+
+
+  app: 
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db

@@ -8,7 +8,7 @@ onmessage = async (event) => {
             ...users[index % users.length],
             id: index + 1,
         }));
-        
+
         postMessage(users10k);
     }
 }
