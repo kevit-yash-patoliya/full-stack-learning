@@ -515,4 +515,4 @@ git pull origin main
 systemctl restart YOUR_SERVICE
 ```
 
-If all three work without `sudo`, this setup is straightforward.
+If all three work without `sudo`, this setup is straightforward.        
