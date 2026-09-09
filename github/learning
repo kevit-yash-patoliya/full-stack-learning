@@ -194,3 +194,34 @@ git push -u origin feature-login
 ```
 
 These commands cover the vast majority of day-to-day Git work. More advanced topics — hooks, sparse checkouts, history filtering, and plumbing commands — build on this same core toolkit.
+
+
+
+
+
+
+
+
+# scenerio 1
+
+
+1. when we reset HEAD~1 after push changes on github 
+2. then after i will commits add in locally then after we need to pull
+3. for this we can use
+    a. `git pull --force` : this will force pull the changes from the remote repository
+    b. `git pull --rebase` : this will rebase the changes from the remote repository
+    c. `git push --force-with-lease`: this will push the changes from the remote repository only if the remote repository is not changed by someone else
+    d. `git push --force` : this will force fully change and replace other changes on remote repository and push our changes
+```
+git push --force-with-lease
+
+Before:
+ 
+GitHub: A ── B ── C
+Local:  A ── B ── D
+ 
+After force push:
+ 
+GitHub: A ── B ── D
+Local:  A ── B ── D
+```
