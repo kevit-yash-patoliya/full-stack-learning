@@ -1,0 +1,26 @@
+{
+  "name": "demo-mikroorm",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "scripts": {
+    "dev":"nodemon --exec bun run index.ts"
+  },
+  "peerDependencies": {
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@mikro-orm/cli": "^7.2.0",
+    "@mikro-orm/core": "^7.2.0",
+    "@mikro-orm/sqlite": "^7.2.0",
+    "@types/node": "^26.5.0",
+    "express": "^5.2.1",
+    "fastify": "^5.12.3",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.23.13",
+    "vitest": "^5.0.0"
+  }
+}
