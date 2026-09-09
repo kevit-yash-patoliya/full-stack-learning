@@ -3,11 +3,11 @@
 Redis (Remote Dictionary Server) is an open-source, in-memory key-value data store used as a database, cache, message broker, and database accelerator.
 
 ---
-
+                                                             
 ## 1. Key-Value & Data Types
 
-Unlike relational databases, Redis stores data as key-value pairs where values can be structured data types:
-
+Unlike relational databases, Redis stores data as key-value pairs where values can be structured data types: 
+ 
 * **Strings:** Binary-safe strings up to 512MB (used for raw text, HTML fragments, or serialized JSON objects).
 * **Lists:** Linked lists of strings sorted by insertion order (great for queues/stacks).
 * **Sets:** Unordered collections of unique strings (good for unique visitors or tags).
