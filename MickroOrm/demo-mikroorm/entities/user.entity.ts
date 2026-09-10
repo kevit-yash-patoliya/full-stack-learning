@@ -4,10 +4,10 @@ import type { InferEntity } from "@mikro-orm/sqlite";
 export const UserSchema = defineEntity({
     name:"User",
     properties:{
-        id:p.uuid().primary(), 
-        firstName:p.string().length(10),
-        lastName:p.string().length(10),
-        email:p.string()
+        id: p.uuid().primary().onCreate(() => crypto.randomUUID()), 
+        firstName: p.string().length(10),
+        lastName: p.string().length(10),
+        email: p.string()
     }
 })
 

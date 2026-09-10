@@ -7,7 +7,7 @@
     "@types/bun": "latest"
   },
   "scripts": {
-    "dev":"nodemon --exec bun run index.ts"
+    "dev": "tsx watch index.ts"
   },
   "peerDependencies": {
     "typescript": "^7.0.2"
