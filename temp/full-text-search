@@ -1,0 +1,151 @@
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    categories TEXT[],
+    search_vector tsvector 
+);
+CREATE FUNCTION products_search_vector_update()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    NEW.search_vector :=
+        setweight(
+            to_tsvector('english', coalesce(NEW.name, '')),
+            'A'
+        )
+        ||
+        setweight(
+            to_tsvector('english', coalesce(NEW.description, '')),
+            'B'
+        )
+        ||
+        setweight(
+            to_tsvector(
+                'english',
+                coalesce(array_to_string(NEW.categories, ' '), '')
+            ),
+            'C'
+        );
+
+    RETURN NEW;
+END;
+$$;
+CREATE TRIGGER products_search_vector_trigger
+BEFORE INSERT OR UPDATE OF name, description, categories
+ON products
+FOR EACH ROW
+EXECUTE FUNCTION products_search_vector_update();
+
+
+
+-- Create an index for efficient searching
+CREATE INDEX products_search_idx ON products USING GIN (search_vector);
+
+
+-- Insert sample data
+INSERT INTO products (name, description, categories) VALUES
+    ('PostgreSQL Database Server',
+     'High-performance open-source relational database',
+     ARRAY['software', 'database', 'open-source']),
+    ('MySQL Database',
+     'Popular open-source database management system',
+     ARRAY['software', 'database', 'open-source']);
+
+
+select * from products
+
+SELECT
+    id,
+    name,
+    description,
+    categories
+FROM products
+WHERE search_vector @@ to_tsquery('english', 'database');
+
+SELECT
+    id,
+    name,
+    description,
+    categories,
+    ts_rank(
+        search_vector,
+        to_tsquery('english', 'database')
+    ) AS rank
+FROM products
+WHERE search_vector @@ to_tsquery('english', 'open & database & relational')
+ORDER BY rank DESC;
+
+create table orders(
+	id serial primary key,
+	product_id int,
+	amount decimal(10,5),
+	price int,
+	quantity int,
+	constraint FK_PRODUCT_ID foreign key (product_id) references products(id)
+)
+
+alter table orders 
+add column search_vector tsvector;
+
+
+create or replace function trigger_on_order()
+returns trigger
+language plpgsql
+as 
+$$
+begin 
+	NEW.search_vector := 
+		to_tsvector('english',coalesce(NEW.price::text,''));
+	return NEW;
+end$$;
+
+create trigger trigger_order
+before insert or update of price
+on orders
+for each row
+execute function trigger_on_order();
+
+insert into orders (product_id,amount,price,quantity)
+values (1,162,12,12)
+
+select * from orders
+inner join products
+on products.id=orders.product_id
+
+
+
+-- add products
+
+INSERT INTO products (name, description, categories) VALUES
+(
+    'MongoDB Database',
+    'NoSQL document database for modern applications',
+    ARRAY['database', 'nosql', 'software']
+),
+(
+    'PostgreSQL Search Engine',
+    'Advanced full text search capabilities for PostgreSQL',
+    ARRAY['database', 'search', 'software']
+),
+(
+    'Redis Cache',
+    'Fast in-memory data store used for caching',
+    ARRAY['database', 'cache', 'software']
+);
+
+SELECT
+    name,
+    ts_rank(
+        search_vector,
+        websearch_to_tsquery('english', 'database')
+    ) AS rank
+FROM products
+WHERE search_vector @@ websearch_to_tsquery(
+    'english',
+    'database'
+)
+ORDER BY rank DESC;
+
+	 

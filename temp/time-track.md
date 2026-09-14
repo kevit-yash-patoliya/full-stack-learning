@@ -5,6 +5,8 @@
 - assessment of react
 
 ## 08-09-2026
+
+
 ### Kafka architectures and terminologys. 
 
 - https://www.tutorialspoint.com/apache_kafka/index.html (expected 2 hours)
