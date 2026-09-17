@@ -1,14 +1,16 @@
-**Daily Update - 15-09-2026**
+**Daily Update - 16-09-2026**
 
 **Tasks :**
 
-* Understand the microservice-architecture in nestjs
-    1. MessagePattern()
-    2. EventPattern() 
+* Architecture overview of kafka
+* Usecases of kafka for industries
+* Install apache/kafka and did some exeperiments and try out apache/kafka 
+    1. `/opt/kafka/bin/kafka-console-producer.sh`
+    2. `/opt/kafka/bin/kafka-console-consumer.sh`
+    3. `/opt/kafka/bin/kafka-topics.sh`
 * 
-
+    
 **Planned tasks for tomorrow**
 
-* transaction in mikro-orm
-* Identity Map in mikro-orm
-* understand kafka architecture
+* more deep-dive to kafka docs
+
