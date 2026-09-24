@@ -167,3 +167,14 @@ A communications protocol providing full-duplex, persistent, real-time communica
   1. Browser initiates a standard HTTP request with an `Upgrade: websocket` header.
   2. Connection upgrades, leaving a persistent connection open.
   3. Client and server can push messages instantly to one another without polling overhead.
+
+
+
+*tricky*
+
+* Why react doesn't flow a data in two way ?
+    * Easy to manage and track state change which is done by parent components
+    
+
+
+    

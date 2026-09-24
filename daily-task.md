@@ -1,16 +1,31 @@
-**Daily Update - 16-09-2026**
+**Daily Update - 23-09-2026**
 
 **Tasks :**
 
-* Architecture overview of kafka
-* Usecases of kafka for industries
-* Install apache/kafka and did some exeperiments and try out apache/kafka 
-    1. `/opt/kafka/bin/kafka-console-producer.sh`
-    2. `/opt/kafka/bin/kafka-console-consumer.sh`
-    3. `/opt/kafka/bin/kafka-topics.sh`
-* 
+* React updates on version-19
+    * Sever components
+    * `use client` and `use server`
+    * Server actions
+    * `useActionState` 
+    * `forwareRef` elimination by `props`
+    * Automatic Batching
+    * Concurent Loading
+    * Error Boundaries (useful when sever components)
     
+  
+* Types of router 
+    * HashRouter
+    * MemoryRouter
+    * BrowserRouter
+    * 
+* React Portals
+* Compound Components
+* DataAttributes
+* React Lifecycle
+* 
+
+
 **Planned tasks for tomorrow**
 
-* more deep-dive to kafka docs
+
 
