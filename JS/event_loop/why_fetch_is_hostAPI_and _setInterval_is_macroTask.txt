@@ -1,0 +1,23 @@
+The distinction between setInterval as a macrotask and fetch as a Web API (which eventually triggers a microtask) is rooted in how the JavaScript engine offloads work and prioritizes the resulting callbacks to maintain system responsiveness.
+Why setInterval is a Macrotask
+setInterval (along with setTimeout) is categorized as a macrotask (often simply called a "task" in the HTML specification) because it represents a discrete, independent, and coarse-grained unit of work.
+
+    Coarse-Grained Scheduling: Macrotasks are designed for operations that do not need to happen "immediately" after the current script finishes. The event loop executes only one macrotask per iteration before checking the microtask queue and the rendering pipeline.
+    Preventing Starvation: If setInterval were a microtask, a recurring timer could potentially "starve" the event loop. Because the event loop drains the entire microtask queue before moving on, a recursive or high-frequency microtask could permanently deny the browser a chance to paint the screen or process user input, effectively freezing the UI.
+
+Why fetch is delegated to Web APIs
+fetch is handled by Web APIs because networking is an inherently time-consuming operation that occurs outside the single-threaded JavaScript engine.
+
+    Non-Blocking Execution: Web APIs allow the JavaScript engine to offload heavy lifting—like managing HTTP handshakes and data streams—to the browser’s background threads. This ensures the main execution thread remains free to handle other code and stay responsive to the user.
+    The Actor Model: Your code simply "requests" the Web API to perform a task. The API performs this in the background and only interacts with the event loop once the work is finished.
+
+Do they all "land in macro only"?
+Your observation that "all are going to land in macro" is a common misunderstanding. While many asynchronous callbacks do land in the macrotask queue, modern Promise-based APIs like fetch behave differently:
+
+    The Offloading Phase: setInterval and fetch are both handed to Web APIs to be handled in the background.
+    The Queuing Phase (The Split):
+        Timers and Events: When a timer (setInterval) expires or a user event (click) occurs, the Web API pushes the callback into the macrotask queue.
+        Promises: When a Promise (like the one returned by fetch) settles, its reaction handlers (.then, .catch, or await continuations) are pushed into the microtask queue, not the macrotask queue.
+    The Priority Phase: Microtasks have a higher priority than macrotasks. Once the call stack is empty, the event loop must drain the entire microtask queue before it is allowed to pick up the next macrotask (like your next setInterval callback).
+
+In summary: setInterval is a macrotask to ensure it yields control to other parts of the system, while fetch is offloaded to Web APIs to prevent blocking. However, because fetch is Promise-based, its final execution actually "lands" in the microtask queue, ensuring your data handling code runs as soon as possible after the data arrives, often before the next timer or paint cycle.
